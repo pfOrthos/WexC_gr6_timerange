@@ -5,3 +5,9 @@
 .visible {
     display: block;
 }
+
+.container{
+    display:flex;
+    flex-direction: row;
+
+}
