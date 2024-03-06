@@ -9,5 +9,10 @@
 .container{
     display:flex;
     flex-direction: row;
+    width: 100%;
+}
 
+.container img {
+    max-width: 80%;
+    height: auto;
 }
