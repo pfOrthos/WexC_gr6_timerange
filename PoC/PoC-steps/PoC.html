@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Veränderbares Kuchenstück</title>
+    <style>
+        .world {
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            background-color: lightblue;
+            /*background: url("img/globe.png");*/
+            background-size: cover;
+        }
+        .slice {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5); /* Schwarze Transparenz */
+            clip-path: polygon(50% 50%, 50% 50%, 50% 50%); /* Start ohne Sichtbarkeit */
+        }
+    </style>
+</head>
+<body>
+
+<div class="world">
+    <div class="slice"></div>
+</div>
+<input type="number" id="angleInput" placeholder="Grad (0-360)" min="0" max="360" />
+
+<script>
+    document.getElementById('angleInput').addEventListener('input', function() {
+        const angle = Math.min(Math.max(0, this.value), 360); // Begrenzt die Eingabe auf Werte zwischen 0 und 360
+        const slice = document.querySelector('.slice');
+
+        // Berechnet den Clip-Pfad abhängig vom Winkel
+        if (angle <= 0) {
+            slice.style.opacity = 0; // Unsichtbar machen, wenn der Winkel 0 ist
+        } else if (angle >= 360) {
+            slice.style.opacity = 1; // Vollständig sichtbar machen, wenn der Winkel 360 ist
+            slice.style.clipPath = 'circle(100%)';
+
+
+        } else {
+            const startX = 50 + 50 * Math.cos(Math.PI * (-90) / 180);
+            const startY = 50 + 50 * Math.sin(Math.PI * (-90) / 180);
+            const endX = 50 + 50 * Math.cos(Math.PI * (angle - 90) / 180);
+            const endY = 50 + 50 * Math.sin(Math.PI * (angle - 90) / 180);
+
+            // Sorgt für einen sanften Übergang zwischen den Segmenten
+            let largeArcFlag = angle <= 180 ? 0 : 1;
+
+            slice.style.opacity = 1; // Sorgt dafür, dass das Kuchenstück sichtbar ist
+            slice.style.clipPath = `polygon(50% 50%, ${startX}% ${startY}%, ${endX}% ${endY}%)`;
+        }
+    });
+
+</script>
+
+</body>
+</html>
