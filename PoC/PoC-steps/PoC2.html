@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Veränderbares Kuchenstück</title>
+    <style>
+        .world {
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            background-color: lightblue;
+        }
+        .slice {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5); /* Schwarze Transparenz */
+            clip-path: polygon(50% 50%, 0% 50%, 50% 0%); /* Anfangswert für 0 Grad */
+        }
+    </style>
+</head>
+<body>
+
+<div class="world">
+    <div class="slice"></div>
+</div>
+<input type="number" id="angleInput" placeholder="Grad (0-360)" min="0" max="360" />
+
+<script>
+    function updateSlice(angle) {
+        const slice = document.querySelector('.slice');
+        let r = 250; // Radius des Kreises
+        let x = r + r * Math.sin(angle * Math.PI / 180);
+        let y = r - r * Math.cos(angle * Math.PI / 180);
+
+        if (angle <= 180) {
+            slice.style.clipPath = `polygon(50% 50%, 50% 0%, ${x}px ${y}px, 50% 100%)`;
+        } else {
+            slice.style.clipPath = `polygon(50% 50%, 50% 0%, 500px 0px, 500px 500px, 0px 500px, 0px 50%, ${x}px ${y}px)`;
+        }
+    }
+
+    document.getElementById('angleInput').addEventListener('input', function() {
+        updateSlice(this.value);
+    });
+
+</script>
+
+</body>
+</html>
