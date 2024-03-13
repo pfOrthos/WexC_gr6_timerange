@@ -4,6 +4,23 @@
     <meta charset="UTF-8">
     <title>Veränderbares Kuchenstück</title>
     <style>
+
+        body{
+            display:flex;
+            justify-content:center;
+            align-content: center;
+
+        }
+        .UI{
+            display:flex;
+            flex-direction: column;
+        }
+        .Input{
+            display:flex;
+            justify-content: center;
+            align-content: center;
+            padding:2em;
+        }
         .world {
             width: 300px;
             height: 300px;
@@ -13,6 +30,7 @@
             background-color: lightblue;
             background: url("img/globelight.png");
             background-size: cover;
+
         }
 
         .hour-mark {
@@ -35,12 +53,16 @@
     </style>
 </head>
 <body>
+<div class="UI">
 
 <div class="world">
     <div class="slice"></div>
 </div>
-<input type="number" id="angleInput" placeholder="Grad (0-360)" min="0" max="360" />
+<div class="Input">
+<input type="number" id="angleInput" placeholder="Grad (0-360 Grad)" min="0" max="360" style="width: 8rem;" />
+</div>
 
+</div>
 
 <script>
     // Füge für jede Stunde eine Markierung hinzu
