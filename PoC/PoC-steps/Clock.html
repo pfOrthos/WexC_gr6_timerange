@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>24-Stunden-Uhr</title>
+    <style>
+        .clock {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background-color: lightblue;
+            position: relative;
+            margin: 50px auto;
+            border: 1px solid black;
+        }
+
+        .hour-mark {
+            position: absolute;
+            width: 2px;
+            height: 20px; /* Höhere Markierung, um nach innen zu zeigen */
+            background-color: black;
+            transform-origin: 0 0px; /* Das Zentrum des Kreises */
+            left: 50%;
+            top: 50%;
+        }
+
+        /* Erstellt die Striche für jede Stunde */
+    </style>
+</head>
+<body>
+
+<div class="clock">
+    <!-- Die Striche werden mit JavaScript hinzugefügt -->
+</div>
+
+<script>
+    // Füge für jede Stunde eine Markierung hinzu
+    const clock = document.querySelector('.clock');
+    for (let i = 0; i < 24; i++) {
+        let mark = document.createElement('div');
+        mark.className = 'hour-mark';
+        // Berechne den Winkel und setze die Rotation
+        let angle = i * 15;
+        mark.style.transform = `rotate(${angle}deg) translateY(-150px)`;
+        clock.appendChild(mark);
+    }
+</script>
+
+</body>
+</html>
