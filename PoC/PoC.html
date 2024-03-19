@@ -63,7 +63,9 @@
     </div>
     <div class="Input">
         <input type="number" id="angleInput" placeholder="Grad (0-360 Grad)" min="0" max="360" style="width: 8rem;"/>
+        <input type="time" id="timeInput" placeholder="Zeit (HH:MM)" style="width: 8rem; margin-top: 1em;"/>
     </div>
+
 
 </div>
 
@@ -79,6 +81,7 @@
         clock.appendChild(mark);
     }
 
+    // angle input-------------------------------------
     document.getElementById('angleInput').addEventListener('input', function () {
         const angle = Math.min(Math.max(0, this.value), 360); // Begrenzt die Eingabe auf Werte zwischen 0 und 360
         const slice = document.querySelector('.slice');
@@ -93,6 +96,52 @@
             slice.style.clipPath = `polygon(50% 50%, ${calculateClipPath(angle)})`;
         }
     });
+    //----------------------------------------------------------
+
+    //time input --------------------------------------------
+    document.getElementById('timeInput').addEventListener('change', function (e) {
+        const [hours, minutes] = e.target.value.split(':').map(num => parseInt(num, 10));
+        // Es ist möglich, dass keine gültige Zeit eingegeben wurde, also prüfen wir auf NaN
+        if (!isNaN(hours) && !isNaN(minutes)) {
+            const totalDegrees = hours * 15 + minutes * 0.25;
+            updateSlice(totalDegrees);
+        }
+    });
+    //----------------------------------------
+
+    function updateSlice(angle) {
+        const slice = document.querySelector('.slice');
+        if (angle <= 0) {
+            slice.style.opacity = 0; // Unsichtbar machen, wenn der Winkel 0 ist
+        } else {
+            slice.style.opacity = 1; // Sorgt dafür, dass das Kuchenstück sichtbar ist
+            // Berechnet den Clip-Pfad abhängig vom Winkel
+            slice.style.clipPath = `polygon(50% 50%, ${calculateClipPath(angle)})`;
+        }
+    }
+
+    //dinded die input felder------------------------------------------------------------------------
+    document.getElementById('angleInput').addEventListener('input', updateFromInputs);
+    document.getElementById('timeInput').addEventListener('change', function () {
+        const [hours, minutes] = this.value.split(':').map(num => parseInt(num, 10));
+        const angle = hours * 15 + minutes * 0.25;
+        document.getElementById('angleInput').value = angle; // Aktualisiert den Winkel basierend auf der Zeit
+        updateFromInputs();
+    });
+
+    function updateFromInputs() {
+        const angle = parseFloat(document.getElementById('angleInput').value) || 0;
+        updateSlice(angle);
+
+        // Aktualisiert das Zeitfeld basierend auf dem Winkel.
+        const hours = Math.floor(angle / 15);
+        const minutes = Math.floor((angle % 15) * 4);
+        document.getElementById('timeInput').value = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+
+    }
+
+    //--------------------------------------------------------------------------
+
 
     /*  Die calculateClipPath Funktion berechnet den Pfad für das Polygon, das den Clip-Path für das Kuchenstück bildet.
 
