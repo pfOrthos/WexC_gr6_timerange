@@ -67,7 +67,6 @@
     </div>
 
 
-
 </div>
 
 <script>
@@ -82,6 +81,7 @@
         clock.appendChild(mark);
     }
 
+    // angle input-------------------------------------
     document.getElementById('angleInput').addEventListener('input', function () {
         const angle = Math.min(Math.max(0, this.value), 360); // Begrenzt die Eingabe auf Werte zwischen 0 und 360
         const slice = document.querySelector('.slice');
@@ -96,7 +96,9 @@
             slice.style.clipPath = `polygon(50% 50%, ${calculateClipPath(angle)})`;
         }
     });
+    //----------------------------------------------------------
 
+    //time input --------------------------------------------
     document.getElementById('timeInput').addEventListener('change', function (e) {
         const [hours, minutes] = e.target.value.split(':').map(num => parseInt(num, 10));
         // Es ist möglich, dass keine gültige Zeit eingegeben wurde, also prüfen wir auf NaN
@@ -105,6 +107,7 @@
             updateSlice(totalDegrees);
         }
     });
+    //----------------------------------------
 
     function updateSlice(angle) {
         const slice = document.querySelector('.slice');
@@ -136,7 +139,8 @@
         document.getElementById('timeInput').value = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
 
     }
-//--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
 
 
     /*  Die calculateClipPath Funktion berechnet den Pfad für das Polygon, das den Clip-Path für das Kuchenstück bildet.
