@@ -101,7 +101,7 @@
     //time input --------------------------------------------
     document.getElementById('timeInput').addEventListener('change', function (e) {
         const [hours, minutes] = e.target.value.split(':').map(num => parseInt(num, 10));
-        // Es ist möglich, dass keine gültige Zeit eingegeben wurde, also prüfen wir auf NaN
+        // Es ist möglich, dass keine gültige Zeit eingegeben wurde, also prüfen wir auf NaN (Not a Number).
         if (!isNaN(hours) && !isNaN(minutes)) {
             const totalDegrees = hours * 15 + minutes * 0.25;
             updateSlice(totalDegrees);
