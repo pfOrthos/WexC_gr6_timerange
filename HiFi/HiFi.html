@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Timerange</title>
+    <style>
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-content: center;
+
+        }
+
+        .UI {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .Input {
+            display: flex;
+            justify-content: center;
+            align-content: center;
+            padding: 2em;
+        }
+
+        .world {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            position: relative;
+            /*overflow: hidden;*/
+            /*background-color: lightblue;*/
+            background: url("img/globelight.png");
+            background-size: cover;
+            border: black solid 2px;
+        }
+
+        .hour-mark {
+            position: absolute;
+            width: 2px;
+            height: 20px; /* Höhere Markierung, um nach innen zu zeigen */
+            background-color: black;
+            transform-origin: 0 0px; /* Das Zentrum des Kreises */
+            left: 50%;
+            top: 50%;
+        }
+
+
+        .slice {
+            position: absolute;
+            inset: 0;
+            background: rgba(252, 196, 78, 0.5);
+            clip-path: polygon(50% 50%, 50% 50%, 50% 50%); /* Start ohne Sichtbarkeit bei 0 grad */
+            /*transform:rotate(45deg);*/
+        }
+    </style>
+</head>
+<body>
+<div class="UI">
+
+    <div class="world">
+        <div class="slice"></div>
+    </div>
+    <div class="Input">
+        <input type="number" id="angleInput" placeholder="Grad (0-360 Grad)" min="0" max="360" style="width: 8rem;"/>
+        <input type="time" id="timeInput" placeholder="Zeit (HH:MM)" style="width: 8rem; margin-top: 1em;"/>
+    </div>
+
+
+</div>
+
+<script>
+    // pro Stunde eine Markierung
+    const clock = document.querySelector('.world');
+    for (let i = 0; i < 24; i++) {
+        let mark = document.createElement('div');
+        mark.className = 'hour-mark';
+        // Berechnet den Winkel und setzt die Rotation
+        let angle = i * 15;
+        mark.style.transform = `rotate(${angle}deg) translateY(-150px)`;
+        clock.appendChild(mark);
+    }
+
+    // angle input-------------------------------------
+    document.getElementById('angleInput').addEventListener('input', function () {
+        const angle = Math.min(Math.max(0, this.value), 360); // Begrenzt die Eingabe auf Werte zwischen 0 und 360
+        const slice = document.querySelector('.slice');
+
+        if (angle <= 0) {
+            slice.style.opacity = 0; // Unsichtbar machen, wenn der Winkel 0 ist
+        } else {
+            const slicePercentage = angle / 360;
+            slice.style.opacity = 1; // Sorgt dafür, dass das Kuchenstück sichtbar ist
+
+            // Berechnet den Clip-Pfad abhängig vom Winkel
+            slice.style.clipPath = `polygon(50% 50%, ${calculateClipPath(angle)})`;
+        }
+    });
+    //----------------------------------------------------------
+
+    //time input --------------------------------------------
+    document.getElementById('timeInput').addEventListener('change', function (e) {
+        const [hours, minutes] = e.target.value.split(':').map(num => parseInt(num, 10));
+        // Es ist möglich, dass keine gültige Zeit eingegeben wurde, also prüfen wir auf NaN (Not a Number).
+        if (!isNaN(hours) && !isNaN(minutes)) {
+            const totalDegrees = hours * 15 + minutes * 0.25;
+            updateSlice(totalDegrees);
+        }
+    });
+
+    //----------------------------------------
+
+    function updateSlice(angle) {
+        const slice = document.querySelector('.slice');
+        if (angle <= 0) {
+            slice.style.opacity = 0; // Unsichtbar machen, wenn der Winkel 0 ist
+        } else {
+            slice.style.opacity = 1; // Sorgt dafür, dass das Kuchenstück sichtbar ist
+            // Berechnet den Clip-Pfad abhängig vom Winkel
+            slice.style.clipPath = `polygon(50% 50%, ${calculateClipPath(angle)})`;
+        }
+    }
+
+    //binded die input felder------------------------------------------------------------------------
+    document.getElementById('angleInput').addEventListener('input', updateFromInputs);
+    document.getElementById('timeInput').addEventListener('change', function () {
+        const [hours, minutes] = this.value.split(':').map(num => parseInt(num, 10));
+        const angle = hours * 15 + minutes * 0.25;
+        document.getElementById('angleInput').value = angle; // Aktualisiert den Winkel basierend auf der Zeit
+        updateFromInputs();
+    });
+
+    function updateFromInputs() {
+        const angle = parseFloat(document.getElementById('angleInput').value) || 0;
+        updateSlice(angle);
+
+        // Aktualisiert das Zeitfeld basierend auf dem Winkel.
+        const hours = Math.floor(angle / 15);
+        const minutes = Math.floor((angle % 15) * 4);
+        document.getElementById('timeInput').value = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    }
+
+    //--------------------------------------------------------------------------
+
+
+    /*  Die calculateClipPath Funktion berechnet den Pfad für das Polygon, das den Clip-Path für das Kuchenstück bildet.
+
+        steps gibt an, wie viele Punkte entlang des Bogens berechnet werden, um eine glatte Kurve zu erzeugen. (umso mehr => umso glatter aber umso rechenintensiver.)
+
+        Innerhalb der for-Schleife:
+        theta ist der Winkel in Grad für jeden dieser Schritte des Bogens, beginnend bei -90 Grad (das ist der Startpunkt oben auf dem Kreis).
+        x und y sind die Koordinaten jedes Punktes auf dem Bogen, berechnet mit der Kosinus- und Sinusfunktion.
+
+        Nach der Schleife wird der letzte Punkt hinzugefügt, um das Polygon zu schließen, indem wieder auf das Zentrum des Kreises gezeigt wird.
+        Die Funktion gibt dann diesen Pfad als Zeichenkette zurück, die in der clip-path-Eigenschaft des Kuchenstücks verwendet wird.*/
+
+    function calculateClipPath(angle) {
+        let path = "";
+        const steps = 100; // Anzahl der Schritte für den Bogen. wichtig damit das kuchenstück bis zum umfang des kresises ausgefüllt wird.
+        const centerX = 50; // Zentrum des Kreises in Prozent
+        const centerY = 50; // Zentrum des Kreises in Prozent
+
+        for (let step = 0; step <= steps; step++) {
+            const theta = (angle / steps) * step - 90; // Startet bei -90 Grad, um oben auf dem Kreis zu beginnen
+            const x = centerX + 50 * Math.cos((Math.PI * theta) / 180);
+            const y = centerY + 50 * Math.sin((Math.PI * theta) / 180);
+            path += `${x}% ${y}%, `;
+        }
+
+        // Fügt den Anfangspunkt hinzu, um das Polygon zu schließen
+        path += `50% 50%`;
+        console.log(path);
+        return path;
+    }
+
+</script>
+
+</body>
+</html>
