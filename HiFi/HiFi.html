@@ -54,6 +54,22 @@
             clip-path: polygon(50% 50%, 50% 50%, 50% 50%); /* Start ohne Sichtbarkeit bei 0 grad */
             /*transform:rotate(45deg);*/
         }
+
+        .icon-grab {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: url("img/grab.png") no-repeat center center;
+            background-size: contain;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none; /* Stellt sicher, dass das Hover über den Slice und nicht über das Icon selbst erkannt wird */
+        }
+
     </style>
 </head>
 <body>
@@ -61,7 +77,9 @@
 
     <div class="world">
         <div class="slice"></div>
+        <div class="icon-grab"></div>
     </div>
+
     <div class="Input">
         <input type="number" id="angleInput" placeholder="Grad (0-360 Grad)" min="0" max="360" style="width: 8rem;"/>
         <input type="time" id="timeInput" placeholder="Zeit (HH:MM)" style="width: 8rem; margin-top: 1em;"/>
@@ -106,6 +124,7 @@
         if (!isNaN(hours) && !isNaN(minutes)) {
             const totalDegrees = hours * 15 + minutes * 0.25;
             updateSlice(totalDegrees);
+            updateIconPosition(totalDegrees);
         }
     });
 
@@ -129,11 +148,14 @@
         const angle = hours * 15 + minutes * 0.25;
         document.getElementById('angleInput').value = angle; // Aktualisiert den Winkel basierend auf der Zeit
         updateFromInputs();
+        updateIconPosition(angle); // Diese Zeile hinzufügen
     });
+
 
     function updateFromInputs() {
         const angle = parseFloat(document.getElementById('angleInput').value) || 0;
         updateSlice(angle);
+        updateIconPosition(angle);
 
         // Aktualisiert das Zeitfeld basierend auf dem Winkel.
         const hours = Math.floor(angle / 15);
@@ -173,6 +195,44 @@
         console.log(path);
         return path;
     }
+
+    //grab icon anzeigen---------------------------------------
+    const slice = document.querySelector('.slice');
+    const iconGrab = document.querySelector('.icon-grab'); // Referenz zum Icon-Element
+
+    // Zeigt das Icon, wenn cursor über das Slice kommt
+    slice.addEventListener('mouseenter', () => {
+        iconGrab.style.display = 'flex';
+    });
+
+    // Versteckt das Icon, wenn die Maus das Slice verlässt
+    slice.addEventListener('mouseleave', () => {
+        iconGrab.style.display = 'none';
+    });
+
+    function updateIconPosition(angle) {
+        // Der Winkel, der für die Positionierung des Icons verwendet wird, sollte der Mittelwert des Slices sein.
+        const middleAngle = angle /2;
+
+        // Umrechnung des mittleren Winkels von Grad in Bogenmaß
+        const radian = (middleAngle - 90) * (Math.PI / 180);
+
+        // Berechnet die x- und y-Position innerhalb des Slices
+        const radius = clock.offsetWidth / 2; // Verwende den Radius des Kreises
+        const iconRadius = radius * 0.6; // Setze das Icon etwas innerhalb des Randes, hier bei 50% des Radius
+
+        // Berechnet die x- und y-Koordinaten für das Icon
+        const iconX = (clock.offsetWidth / 2) + iconRadius * Math.cos(radian);
+        const iconY = (clock.offsetHeight / 2) + iconRadius * Math.sin(radian);
+
+        // Aktualisiere die Position des Icons
+        iconGrab.style.left = `${iconX}px`;
+        iconGrab.style.top = `${iconY}px`;
+        iconGrab.style.transform = 'translate(-50%, -50%)';
+    }
+
+
+    //--------------------------------------------------------------
 
 </script>
 
