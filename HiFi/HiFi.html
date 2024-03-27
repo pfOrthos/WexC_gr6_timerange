@@ -39,7 +39,7 @@
         .hour-mark {
             position: absolute;
             width: 2px;
-            height: 20px; /* Höhere Markierung, um nach innen zu zeigen */
+            height: 20px;
             background-color: black;
             transform-origin: 0 0px; /* Das Zentrum des Kreises */
             left: 50%;
@@ -68,7 +68,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            pointer-events: none; /* Stellt sicher, dass das Hover über den Slice und nicht über das Icon selbst erkannt wird */
+            pointer-events: none; /* Stellt sicher, dass das Hover über den Slice und nicht über das Icon selbst erkannt wird => verhindert flackern*/
             cursonr: pointer;
         }
 
