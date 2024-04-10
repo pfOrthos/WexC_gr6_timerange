@@ -23,6 +23,9 @@
             align-content: center;
             padding: 2em;
         }
+        #angleInput{
+            display:none
+        }
 
         .world {
             width: 300px;
@@ -83,16 +86,24 @@
 </head>
 <body>
 <div class="UI">
+    <div class="Input">
+       <input type="number" id="angleInput" placeholder="Grad (0-360 Grad)" min="0" max="360" style="width: 8rem;"/>
+        <p>Duration:  </p>
+        <input type="time" id="timeInput" placeholder="Zeit (HH:MM)" style="width: 8rem; margin-top: 1em;"/>
+    </div>
+    <div class="start_end">
+        <p>Start: <span id="startTime">00:00</span></p>
+    </div>
+    <div class="start_end">
+        <p>End: <span id="endTime">00:00</span></p>
+    </div>
+
 
     <div class="world">
         <div class="slice"></div>
         <div class="icon-grab"></div>
     </div>
 
-    <div class="Input">
-        <input type="number" id="angleInput" placeholder="Grad (0-360 Grad)" min="0" max="360" style="width: 8rem;"/>
-        <input type="time" id="timeInput" placeholder="Zeit (HH:MM)" style="width: 8rem; margin-top: 1em;"/>
-    </div>
 
 
 </div>
@@ -171,9 +182,9 @@
         const minutes = Math.floor((angle % 15) * 4);
         document.getElementById('timeInput').value = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
     }
-
     //--------------------------------------------------------------------------
 
+    //berechnet den clippath für das slice---------------------------------------
 
     /*  Die calculateClipPath Funktion berechnet den Pfad für das Polygon, das den Clip-Path für das Kuchenstück bildet.
 
@@ -239,10 +250,33 @@
         iconGrab.style.top = `${iconY}px`;
         iconGrab.style.transform = 'translate(-50%, -50%)';
     }
-
-
     //--------------------------------------------------------------
 
+
+    //start und endzeit updaten---------------------------------------
+    function updateFromInputs() {
+        const angle = parseFloat(document.getElementById('angleInput').value) || 0;
+
+        // Berechnet die Endzeit basierend auf dem Startwinkel und der Dauer
+        const startTotalMinutes = 0; // Startzeit ist 00:00, also 0 Minuten nach Mitternacht
+        const durationMinutes = angle / 360 * 1440; // Umwandlung des Winkels in Minuten (360 Grad entsprechen 1440 Minuten, also einem ganzen Tag)
+        const endTotalMinutes = startTotalMinutes + durationMinutes;
+
+        const startHours = Math.floor(startTotalMinutes / 60);
+        const startMinutes = startTotalMinutes % 60;
+        const endHours = Math.floor(endTotalMinutes / 60) % 24; // Verwendet Modulo 24, um sicherzustellen, dass die Stunden nicht über 24 hinausgehen
+        const endMinutes = endTotalMinutes % 60;
+
+        // Aktualisiert die Anzeige der Start- und Endzeiten
+        document.getElementById('startTime').textContent = `${startHours.toString().padStart(2, '0')}:${startMinutes.toString().padStart(2, '0')}`;
+        document.getElementById('endTime').textContent = `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
+
+        // Aktualisiert das Zeitfeld basierend auf dem Winkel.
+        document.getElementById('timeInput').value = `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
+        updateSlice(angle);
+        updateIconPosition(angle);
+    }
+//-------------------------------------------------------------------------
 </script>
 
 </body>
