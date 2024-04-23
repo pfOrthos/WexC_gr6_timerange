@@ -105,8 +105,11 @@
         } else if (startPosition >= 180 && startPosition < 270) {
             wrapper.style.background = 'center no-repeat url("img/day.png")';
             wrapper.style.backgroundSize = '600px 600px';
-        } else {
+        } else if (startPosition >= 270 && startPosition < 359) {
             wrapper.style.background = 'center no-repeat url("img/evening.png")';
+            wrapper.style.backgroundSize = '600px 600px';
+        } else {
+            wrapper.style.background = 'center no-repeat url("img/night.png")';
             wrapper.style.backgroundSize = '600px 600px';
         }
     }
