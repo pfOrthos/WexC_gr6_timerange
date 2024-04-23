@@ -58,11 +58,11 @@
     }
 
     // Sonne und Mond platzieren
-    let orbiter = document.createElement('div');
+    const orbiter = document.createElement('div');
     orbiter.className = 'sun-moon';
     // Berechnet den Winkel und setzt die Rotation
     let angle = document.getElementById('startPosition').value;
-    orbiter.style.transform = `rotate(${angle}deg) translateY(-220px)`;
+    orbiter.style.transform = `rotate(${angle-7}deg) translateY(-220px)`;
     clock.appendChild(orbiter);
 
     // angle input-------------------------------------
@@ -89,19 +89,6 @@
         slice.style.transform = `rotate(${angle}deg)`;
     });
     //----------------------------------------------------------
-
-    //time input --------------------------------------------
-    document.getElementById('timeInput').addEventListener('change', function (e) {
-        const [hours, minutes] = e.target.value.split(':').map(num => parseInt(num, 10));
-        // Es ist möglich, dass keine gültige Zeit eingegeben wurde, also prüfen wir auf NaN (Not a Number).
-        if (!isNaN(hours) && !isNaN(minutes)) {
-            const totalDegrees = hours * 15 + minutes * 0.25;
-            updateSlice(totalDegrees);
-            updateIconPosition(totalDegrees);
-        }
-    });
-
-    //----------------------------------------
 
     // Funktion zum Aktualisieren des Hintergrundbilds basierend auf dem Startwinkel
     function updateBackground(startPosition) {
@@ -140,9 +127,13 @@
     function updateSlice(angle) {
         const slice = document.querySelector('.slice');
         if (angle <= 0) {
-            slice.style.opacity = 0; // Unsichtbar machen, wenn der Winkel 0 ist
+            // Unsichtbar machen, wenn der Winkel 0 ist
+            orbiter.style.display = 'none';
+            slice.style.display = 'none';
         } else {
-            slice.style.opacity = 1; // Sorgt dafür, dass das Kuchenstück sichtbar ist
+            // Sichtbar machen
+            slice.style.display = 'flex';
+            orbiter.style.display = 'block';
             // Berechnet den Clip-Pfad abhängig vom Winkel
             slice.style.clipPath = `polygon(50% 50%, ${calculateClipPath(angle)})`;
         }
@@ -153,13 +144,12 @@
     document.getElementById('startPosition').addEventListener('input', updateFromInputs);
     document.getElementById('timeInput').addEventListener('change', function () {
         const [hours, minutes] = this.value.split(':').map(num => parseInt(num, 10));
-        const angle = hours * 15 + minutes * 0.25;
-        document.getElementById('angleInput').value = angle; // Aktualisiert den Winkel basierend auf der Zeit
-        updateFromInputs();
-        updateIconPosition(angle);
-
-        const startPosition = parseFloat(document.getElementById('startPosition').value); // Wert des Startwinkel-Eingabefelds lesen
-        updateBackground(startPosition); // Funktion aufrufen, um das Hintergrundbild zu aktualisieren
+        if (!isNaN(hours) && !isNaN(minutes)) {
+            document.getElementById('angleInput').value = hours * 15 + minutes * 0.25; // Aktualisiert den Winkel basierend auf der Zeit
+            const startPosition = parseFloat(document.getElementById('startPosition').value); // Wert des Startwinkel-Eingabefelds lesen
+            updateFromInputs();
+            updateBackground(startPosition); // Funktion aufrufen, um das Hintergrundbild zu aktualisieren
+        }
     });
 
     //--------------------------------------------------------------------------
@@ -212,7 +202,7 @@
 
     // Zeigt das Icon, wenn cursor über das Slice kommt
     slice.addEventListener('mouseenter', () => {
-        // iconGrab.style.display = 'flex';
+        iconGrab.style.display = 'flex';
     });
 
     // Versteckt das Icon, wenn die Maus das Slice verlässt
@@ -241,9 +231,6 @@
         slice.style.transformOrigin = 'center'; // Setze den Ursprung der Transformation auf das Zentrum des Slices
         slice.style.transform = `rotate(${degrees}deg)`;
 
-        // Position des Grab-Icons aktualisieren, um dem Slice zu folgen
-        updateIconPosition(degrees);
-
         // Startwinkelfeld aktualisieren
         document.getElementById('startPosition').value = Math.round(degrees);
 
@@ -251,29 +238,38 @@
         updateFromInputs();
 
         const startPosition = parseFloat(document.getElementById('startPosition').value); // Wert des Startwinkel-Eingabefelds lesen
+        const angle = Math.floor(parseFloat(document.getElementById('angleInput').value)) || 0;
         updateBackground(startPosition); // Funktion aufrufen, um das Hintergrundbild zu aktualisieren
-
         updateOrbiter(startPosition); // Funktion aufrufen, um Sonne/Mond aktualisieren
+        updateIconPosition(angle);  // Position des Grab-Icons aktualisieren, um dem Slice zu folgen
+
     }
 
 
     function updateIconPosition(angle) {
-        // Berechnung der x- und y-Koordinaten für das Icon innerhalb des Kreises
-        const radius = clock.offsetWidth / 2;
-        const iconRadius = radius * 0.6;
-        const radians = angle * (Math.PI / 180);
+        console.log("updateIconPosition " + angle)
+        // Wert des Startwinkel-Eingabefelds lesen
+        const startPosition = parseFloat(document.getElementById('startPosition').value);
 
-        // Berechnung der x- und y-Koordinaten basierend auf dem Winkel und dem Mittelpunkt des Kreises
-        const centerX = clock.offsetWidth / 2;
-        const centerY = clock.offsetHeight / 2;
-        const iconX = centerX + iconRadius * Math.cos(radians);
-        const iconY = centerY + iconRadius * Math.sin(radians);
+        // Der Winkel, der für die Positionierung des Icons verwendet wird, sollte der Mittelwert des Slices sein.
+        const middleAngle = (angle /2) + startPosition;
 
-        // Aktualisierung der Position des Icons
+        // Umrechnung des mittleren Winkels von Grad in Bogenmaß
+        const radian = (middleAngle - 90) * (Math.PI / 180);
+
+        // Berechnet die x- und y-Position innerhalb des Slices
+        const radius = clock.offsetWidth / 2; // Verwende den Radius des Kreises
+        const iconRadius = radius * 0.6; // Setze das Icon etwas innerhalb des Randes, hier bei 50% des Radius
+
+        // Berechnet die x- und y-Koordinaten für das Icon
+        const iconX = (clock.offsetWidth / 2) + iconRadius * Math.cos(radian);
+        const iconY = (clock.offsetHeight / 2) + iconRadius * Math.sin(radian);
+
+        // Aktualisiere die Position des Icons
         iconGrab.style.left = `${iconX}px`;
         iconGrab.style.top = `${iconY}px`;
+        // iconGrab.style.transform = 'translate(-50%, -50%)';
     }
-
 
     //--------------------------------------------------------------
 
@@ -289,26 +285,16 @@
         const startTotalMinutes = (rotation / 360) * 1440; // Startzeit ist 00:00, also 0 Minuten nach Mitternacht
         const durationMinutes = (angle / 360) * 1440; // Umwandlung des Winkels in Minuten (360 Grad entsprechen 1440 Minuten, also einem ganzen Tag)
         const endTotalMinutes = startTotalMinutes + durationMinutes;
-        // console.log("start / duration / end: " + startTotalMinutes + " " + durationMinutes + " " + endTotalMinutes);
+
         const startHours = Math.floor(startTotalMinutes / 60);
         const startMinutes = Math.floor(startTotalMinutes % 60);
         const endHours = Math.floor(endTotalMinutes / 60) % 24; // Verwendet Modulo 24, um sicherzustellen, dass die Stunden nicht über 24 hinausgehen
         const endMinutes = Math.floor(endTotalMinutes % 60);
-        // console.log("startMinutes / endMinutes: " + startMinutes + " " + endMinutes);
 
         // Aktualisiert die Anzeige der Start- und Endzeiten
         document.getElementById('startTime').textContent = `${startHours.toString().padStart(2, '0')}:${startMinutes.toString().padStart(2, '0')}`;
         document.getElementById('endTime').textContent = `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
-
-        // Aktualisiert das Zeitfeld basierend auf dem Winkel.
-        // let timeHours = endHours - startHours;
-        // const timeMinutes = endMinutes - startMinutes;
-
-        // if (timeHours)
-
         // document.getElementById('timeInput').value = `${timeHours.toString().padStart(2, '0')}:${timeMinutes.toString().padStart(2, '0')}`;
-        updateSlice(angle);
-        updateIconPosition(angle);
     }
 
     //-------------------------------------------------------------------------

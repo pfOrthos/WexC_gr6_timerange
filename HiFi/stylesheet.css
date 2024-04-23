@@ -96,10 +96,12 @@ body {
 }
 
 .sun-moon {
-    background-image: url("img/sun.png");
+    display: none; /* Start ohne Sichtbarkeit bei 0 grad */
+    background-image: url("img/moon.png"); /* Initiales Bild bei 0 grad */
     background-size: cover;
     position: absolute;
     transform-origin: 0 0px; /* Das Zentrum des Kreises */
+    transform: matrix(0.992546, -0.121869, 0.121869, 0.992546, -26.8113, -218.36) rotate(-7deg); /*Initiale Position*/
     width: 60px;
     height: 60px;
     left: 50%;
@@ -108,6 +110,7 @@ body {
 
 
 .slice {
+    display: block;
     position: absolute;
     inset: 0;
     background: rgba(252, 196, 78, 0.5);
