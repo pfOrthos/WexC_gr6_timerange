@@ -250,9 +250,11 @@
         console.log("updateIconPosition " + angle)
         // Wert des Startwinkel-Eingabefelds lesen
         const startPosition = parseFloat(document.getElementById('startPosition').value);
-
+        let middleAngle = angle /2;
         // Der Winkel, der für die Positionierung des Icons verwendet wird, sollte der Mittelwert des Slices sein.
-        const middleAngle = (angle /2) + startPosition;
+        if (startPosition) {
+            middleAngle = (angle /2) + startPosition;
+        }
 
         // Umrechnung des mittleren Winkels von Grad in Bogenmaß
         const radian = (middleAngle - 90) * (Math.PI / 180);
