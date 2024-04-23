@@ -93,6 +93,22 @@
 
     //----------------------------------------
 
+    // Funktion zum Aktualisieren des Hintergrundbilds basierend auf dem Startwinkel
+    function updateBackground(startPosition) {
+        const ui = document.querySelector('.UI');
+        console.log("startPosition: " + startPosition);
+
+        if (startPosition >= 0 && startPosition < 90) {
+            ui.style.background = 'center / contain no-repeat url("img/morning.png")';
+        } else if (startPosition >= 90 && startPosition < 180) {
+            ui.style.background = 'center / contain no-repeat url("img/day.png")';
+        } else if (startPosition >= 180 && startPosition < 270) {
+            ui.style.background = 'center / contain no-repeat url("img/evening.png")';
+        } else {
+            ui.style.background = 'center / contain no-repeat url("img/night.png")';
+        }
+    }
+
     function updateSlice(angle) {
         const slice = document.querySelector('.slice');
         if (angle <= 0) {
@@ -113,6 +129,9 @@
         document.getElementById('angleInput').value = angle; // Aktualisiert den Winkel basierend auf der Zeit
         updateFromInputs();
         updateIconPosition(angle);
+
+        const startPosition = parseFloat(document.getElementById('startPosition').value); // Wert des Startwinkel-Eingabefelds lesen
+        updateBackground(startPosition); // Funktion aufrufen, um das Hintergrundbild zu aktualisieren
     });
 
     //--------------------------------------------------------------------------
@@ -165,7 +184,7 @@
 
     // Zeigt das Icon, wenn cursor über das Slice kommt
     slice.addEventListener('mouseenter', () => {
-        iconGrab.style.display = 'flex';
+        // iconGrab.style.display = 'flex';
     });
 
     // Versteckt das Icon, wenn die Maus das Slice verlässt
@@ -202,6 +221,9 @@
 
         // Update der Startzeit basierend auf dem neuen Startwinkel
         updateFromInputs();
+
+        const startPosition = parseFloat(document.getElementById('startPosition').value); // Wert des Startwinkel-Eingabefelds lesen
+        updateBackground(startPosition); // Funktion aufrufen, um das Hintergrundbild zu aktualisieren
     }
 
 
@@ -229,7 +251,7 @@
     function updateFromInputs() {
         const angle = Math.floor(parseFloat(document.getElementById('angleInput').value)) || 0;
         const rotation = Math.floor(parseFloat(document.getElementById('startPosition').value)) || 0;
-        console.log("Inputs: " + angle + " " + rotation);
+        // console.log("Inputs: " + angle + " " + rotation);
         updateSlice(angle);
         updateIconPosition(angle);
 
@@ -237,12 +259,12 @@
         const startTotalMinutes = (rotation / 360) * 1440; // Startzeit ist 00:00, also 0 Minuten nach Mitternacht
         const durationMinutes = (angle / 360) * 1440; // Umwandlung des Winkels in Minuten (360 Grad entsprechen 1440 Minuten, also einem ganzen Tag)
         const endTotalMinutes = startTotalMinutes + durationMinutes;
-        console.log("start / duration / end: " + startTotalMinutes + " " + durationMinutes + " " + endTotalMinutes);
+        // console.log("start / duration / end: " + startTotalMinutes + " " + durationMinutes + " " + endTotalMinutes);
         const startHours = Math.floor(startTotalMinutes / 60);
         const startMinutes = Math.floor(startTotalMinutes % 60);
         const endHours = Math.floor(endTotalMinutes / 60) % 24; // Verwendet Modulo 24, um sicherzustellen, dass die Stunden nicht über 24 hinausgehen
         const endMinutes = Math.floor(endTotalMinutes % 60);
-        console.log("startMinutes / endMinutes: " + startMinutes + " " + endMinutes);
+        // console.log("startMinutes / endMinutes: " + startMinutes + " " + endMinutes);
 
         // Aktualisiert die Anzeige der Start- und Endzeiten
         document.getElementById('startTime').textContent = `${startHours.toString().padStart(2, '0')}:${startMinutes.toString().padStart(2, '0')}`;
