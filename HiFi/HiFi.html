@@ -57,6 +57,14 @@
         clock.appendChild(mark);
     }
 
+    // Sonne und Mond platzieren
+    let orbiter = document.createElement('div');
+    orbiter.className = 'sun-moon';
+    // Berechnet den Winkel und setzt die Rotation
+    let angle = document.getElementById('startPosition').value;
+    orbiter.style.transform = `rotate(${angle}deg) translateY(-220px)`;
+    clock.appendChild(orbiter);
+
     // angle input-------------------------------------
     document.getElementById('angleInput').addEventListener('input', function () {
         const angle = Math.min(Math.max(0, this.value), 360); // Begrenzt die Eingabe auf Werte zwischen 0 und 360
@@ -97,18 +105,35 @@
 
     // Funktion zum Aktualisieren des Hintergrundbilds basierend auf dem Startwinkel
     function updateBackground(startPosition) {
-        const ui = document.querySelector('.UI');
+        const wrapper = document.querySelector('.wrapper');
         // const body = document.body;
         console.log("startPosition: " + startPosition);
 
         if (startPosition >= 0 && startPosition < 90) {
-            ui.style.background = 'center no-repeat url("img/morning.png")';
+            wrapper.style.background = 'center no-repeat url("img/night.png")';
+            wrapper.style.backgroundSize = '600px 600px';
         } else if (startPosition >= 90 && startPosition < 180) {
-            ui.style.background = 'center no-repeat url("img/day.png")';
+            wrapper.style.background = 'center no-repeat url("img/morning.png")';
+            wrapper.style.backgroundSize = '600px 600px';
         } else if (startPosition >= 180 && startPosition < 270) {
-            ui.style.background = 'center no-repeat url("img/evening.png")';
+            wrapper.style.background = 'center no-repeat url("img/day.png")';
+            wrapper.style.backgroundSize = '600px 600px';
         } else {
-            ui.style.background = 'center no-repeat url("img/night.png")';
+            wrapper.style.background = 'center no-repeat url("img/evening.png")';
+            wrapper.style.backgroundSize = '600px 600px';
+        }
+    }
+
+    function updateOrbiter(startPosition) {
+        const orbiter = document.querySelector('.sun-moon');
+        orbiter.style.transform = `rotate(${startPosition-7}deg) translateY(-220px)`;
+
+        if (startPosition >= 0 && startPosition < 90) {
+            orbiter.style.backgroundImage = 'url("img/moon.png")';
+        } else if (startPosition >= 90 && startPosition < 270) {
+            orbiter.style.backgroundImage = 'url("img/sun.png")';
+        } else if (startPosition >= 270 && startPosition < 360) {
+            orbiter.style.backgroundImage = 'url("img/moon.png")';
         }
     }
 
@@ -227,6 +252,8 @@
 
         const startPosition = parseFloat(document.getElementById('startPosition').value); // Wert des Startwinkel-Eingabefelds lesen
         updateBackground(startPosition); // Funktion aufrufen, um das Hintergrundbild zu aktualisieren
+
+        updateOrbiter(startPosition); // Funktion aufrufen, um Sonne/Mond aktualisieren
     }
 
 

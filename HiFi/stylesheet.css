@@ -17,7 +17,7 @@ body {
 }
 
 .wrapper {
-    background: center no-repeat url("img/morning.png");
+    background: center no-repeat url("img/night.png");
     background-size: 600px 600px;
     -webkit-border-radius: 20px;
     -moz-border-radius: 20px;
@@ -73,7 +73,6 @@ body {
     transform-origin: 0 0px; /* Das Zentrum des Kreises */
     left: 50%;
     top: 50%;
-    outline: black;
 }
 
 .hour-mark {
@@ -94,6 +93,17 @@ body {
     left: -30px;
     width: 300px;
     height: 300px;
+}
+
+.sun-moon {
+    background-image: url("img/sun.png");
+    background-size: cover;
+    position: absolute;
+    transform-origin: 0 0px; /* Das Zentrum des Kreises */
+    width: 60px;
+    height: 60px;
+    left: 50%;
+    top: 50%;
 }
 
 
