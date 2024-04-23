@@ -6,30 +6,32 @@
     <link rel="stylesheet" href="stylesheet.css">
 </head>
 <body>
-<div class="UI">
-    <div>
-        <input type="number" id="angleInput" placeholder="Grad (0-360 Grad)" min="0" max="360" style="width: 8rem;"/>
-        <input type="number" id="startPosition" placeholder="Startwinkel (0-360 Grad)" min="0" max="360" style="width: 8rem;"/>
-    </div>
-    <div class="duration">
-        <p>DURATION:  </p>
-        <input type="time" id="timeInput" placeholder="Zeit (HH:MM)" style="width: 8rem; margin-top: 1em;"/>
-    </div>
-    <div class="start_end">
-        <p>START: </p><span id="startTime">00:00</span>
-    </div>
-    <div class="start_end">
-        <p>END: </p><span id="endTime">00:00</span>
-    </div>
+<div class="wrapper">
+    <div class="UI">
+        <div>
+            <input type="number" id="angleInput" placeholder="Grad (0-360 Grad)" min="0" max="360" style="width: 8rem;"/>
+            <input type="number" id="startPosition" placeholder="Startwinkel (0-360 Grad)" min="0" max="360" style="width: 8rem;"/>
+        </div>
+        <div class="duration">
+            <p>DURATION:  </p>
+            <input type="time" id="timeInput" placeholder="Zeit (HH:MM)" style="width: 8rem; margin-top: 1em;"/>
+        </div>
+        <div class="start_end">
+            <p>START: </p><span id="startTime">00:00</span>
+        </div>
+        <div class="start_end">
+            <p>END: </p><span id="endTime">00:00</span>
+        </div>
 
 
-    <div class="world">
-        <div class="ring"></div>
-        <div class="slice"></div>
-        <div class="icon-grab"></div>
+        <div class="world">
+            <div class="ring"></div>
+            <div class="slice"></div>
+            <div class="icon-grab"></div>
+        </div>
+
+
     </div>
-
-
 </div>
 
 <script>
@@ -96,16 +98,17 @@
     // Funktion zum Aktualisieren des Hintergrundbilds basierend auf dem Startwinkel
     function updateBackground(startPosition) {
         const ui = document.querySelector('.UI');
+        // const body = document.body;
         console.log("startPosition: " + startPosition);
 
         if (startPosition >= 0 && startPosition < 90) {
-            ui.style.background = 'center / contain no-repeat url("img/morning.png")';
+            ui.style.background = 'center no-repeat url("img/morning.png")';
         } else if (startPosition >= 90 && startPosition < 180) {
-            ui.style.background = 'center / contain no-repeat url("img/day.png")';
+            ui.style.background = 'center no-repeat url("img/day.png")';
         } else if (startPosition >= 180 && startPosition < 270) {
-            ui.style.background = 'center / contain no-repeat url("img/evening.png")';
+            ui.style.background = 'center no-repeat url("img/evening.png")';
         } else {
-            ui.style.background = 'center / contain no-repeat url("img/night.png")';
+            ui.style.background = 'center no-repeat url("img/night.png")';
         }
     }
 
