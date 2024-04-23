@@ -110,7 +110,7 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none; /* Stellt sicher, dass das Hover über den Slice und nicht über das Icon selbst erkannt wird => verhindert flackern*/
-    cursonr: pointer;
+    cursor: pointer;
 }
 
 .icon-grab:hover {
